@@ -4,7 +4,8 @@ using DG.Tweening;
 public class HelicopterController : MonoBehaviour
 {
     public Rigidbody rigi;
-    float _targetRotation;
+    float _targetRotationY;
+    float _targetRotationX;
 
     private void Update()
     {
@@ -27,40 +28,73 @@ public class HelicopterController : MonoBehaviour
         {
             TakeOff();
         }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Stop();
+        }
+
+        if (Input.GetKey(KeyCode.T))
+        {
+            Lean();
+        }
+
+        if (Input.GetKeyUp(KeyCode.T))
+        {
+            UnLean();
+        }
     }
 
     void TakeOff()
     {
-        rigi.velocity = Vector3.up * 50f;
+        rigi.velocity = Vector3.up * 5f;
     }
+
+
 
     public void Forward()
     {
-        Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+        Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotationY, 0.0f) * Vector3.forward;
         rigi.velocity = targetDirection.normalized * 50f;
         //rigi.AddForce(transform.rotation.eulerAngles * 5f, ForceMode.Impulse);
+    }
+
+    void Lean()
+    {
+        _targetRotationX = 45f;
+        transform.DORotateQuaternion(Quaternion.Euler(_targetRotationX, _targetRotationY, 0f), 1.5f);
+
+        //Vector3 targetDirection = Quaternion.Euler(_targetRotationX, _targetRotationY, 0.0f) * Vector3.forward;
+    }
+
+    void UnLean()
+    {
+        _targetRotationX = 0f;
+        transform.DORotateQuaternion(Quaternion.Euler(_targetRotationX, _targetRotationY, 0f), 1.5f);
+
+        //Vector3 targetDirection = Quaternion.Euler(_targetRotationX, _targetRotationY, 0.0f) * Vector3.forward;
     }
 
     public void Stop()
     {
         rigi.velocity = Vector3.zero;
+        Physics.gravity = Vector3.zero;
     }
 
     public void RotateLeft()
     {
-        _targetRotation -= 10f;
-        transform.DORotateQuaternion(Quaternion.Euler(0f, _targetRotation, 0f), 1.5f);
+        _targetRotationY -= 10f;
+        transform.DORotateQuaternion(Quaternion.Euler(0f, _targetRotationY, 0f), 1.5f);
 
-        Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+        Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotationY, 0.0f) * Vector3.forward;
         rigi.velocity = targetDirection.normalized * 5f;
     }
 
     public void RotateRight()
     {
-        _targetRotation += 10f;
-        // transform.rotation = Quaternion.Euler(0f, _targetRotation, 0f);
-        transform.DORotateQuaternion(Quaternion.Euler(0f, _targetRotation, 0f), 1.5f);
-        Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+        _targetRotationY += 10f;
+        transform.DORotateQuaternion(Quaternion.Euler(0f, _targetRotationY, 0f), 1.5f);
+        Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotationY, 0.0f) * Vector3.forward;
         rigi.velocity = targetDirection.normalized * 5f;
     }
 }
