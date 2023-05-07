@@ -19,12 +19,12 @@ public class HelicopterController : MonoBehaviour
             Stop();
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKey(KeyCode.Q))
         {
             RotateLeft();
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKey(KeyCode.R))
         {
             RotateRight();
         }
@@ -95,7 +95,7 @@ public class HelicopterController : MonoBehaviour
         transform.DORotateQuaternion(Quaternion.Euler(0f, _targetRotationY, 0f), 1.5f);
 
         Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotationY, 0.0f) * Vector3.forward;
-        rigi.velocity = targetDirection.normalized * 5f;
+        rigi.velocity = targetDirection.normalized * rigi.velocity.magnitude;
     }
 
     public void RotateRight()
@@ -103,7 +103,7 @@ public class HelicopterController : MonoBehaviour
         _targetRotationY += 10f;
         transform.DORotateQuaternion(Quaternion.Euler(0f, _targetRotationY, 0f), 1.5f);
         Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotationY, 0.0f) * Vector3.forward;
-        rigi.velocity = targetDirection.normalized * 5f;
+        rigi.velocity = targetDirection.normalized * rigi.velocity.magnitude;
     }
 
     private void OnTriggerEnter(Collider other)
