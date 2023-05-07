@@ -9,11 +9,16 @@ public class HelicopterController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W)) 
+        if (Input.GetKey(KeyCode.W)) 
         {
             Forward();
         }
-        
+
+        if (Input.GetKeyUp(KeyCode.W))
+        {
+            Stop();
+        }
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             RotateLeft();
@@ -43,42 +48,45 @@ public class HelicopterController : MonoBehaviour
         {
             UnLean();
         }
+
+        if (Input.GetKeyUp(KeyCode.L))
+        {
+            Landing();
+        }
     }
 
     void TakeOff()
     {
-        rigi.velocity = Vector3.up * 5f;
+        transform.DOMoveY(transform.position.y + 10f, 1f);
     }
 
-
+    void Landing()
+    {
+        transform.DOMoveY(0f, 3f);
+    }
 
     public void Forward()
     {
+        Lean();
         Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotationY, 0.0f) * Vector3.forward;
-        rigi.velocity = targetDirection.normalized * 50f;
-        //rigi.AddForce(transform.rotation.eulerAngles * 5f, ForceMode.Impulse);
+        rigi.velocity = targetDirection.normalized * 10f;
     }
 
     void Lean()
     {
-        _targetRotationX = 45f;
+        _targetRotationX = 15f;
         transform.DORotateQuaternion(Quaternion.Euler(_targetRotationX, _targetRotationY, 0f), 1.5f);
-
-        //Vector3 targetDirection = Quaternion.Euler(_targetRotationX, _targetRotationY, 0.0f) * Vector3.forward;
     }
 
     void UnLean()
     {
         _targetRotationX = 0f;
         transform.DORotateQuaternion(Quaternion.Euler(_targetRotationX, _targetRotationY, 0f), 1.5f);
-
-        //Vector3 targetDirection = Quaternion.Euler(_targetRotationX, _targetRotationY, 0.0f) * Vector3.forward;
     }
 
     public void Stop()
     {
-        rigi.velocity = Vector3.zero;
-        Physics.gravity = Vector3.zero;
+        UnLean();
     }
 
     public void RotateLeft()
@@ -96,5 +104,11 @@ public class HelicopterController : MonoBehaviour
         transform.DORotateQuaternion(Quaternion.Euler(0f, _targetRotationY, 0f), 1.5f);
         Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotationY, 0.0f) * Vector3.forward;
         rigi.velocity = targetDirection.normalized * 5f;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        rigi.velocity = Vector3.zero;
+        transform.DOKill();
     }
 }
